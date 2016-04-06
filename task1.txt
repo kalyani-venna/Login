@@ -1,0 +1,94 @@
+package Mypackage;
+
+
+import Mypackage.Empl;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ExmpleJdbc {
+
+	public static void main( String args[] )
+	  {
+	    Connection c = null;
+	    Statement stmt = null;
+	    try {
+	      Class.forName("org.sqlite.JDBC");
+	      c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Mtuity\\workspace\\newdb.sqlite");
+	      System.out.println("Opened database successfully");
+
+	     stmt = c.createStatement();
+	    // String sql="Create table Employees "+"(empId Int primary key unique ,"+"empName Text not null,"+"Hours Int check(Hours<=40)  ,"+"Overtime Int check(Overtime<=12) ,"+"Salary real)";
+	    // stmt.executeUpdate(sql);
+	      try
+	      {
+	      String sql1 = "INSERT INTO Employees (empId,empName,Hours,Overtime,Salary) " +
+                 "VALUES (1, 'Paul', 32, null, null );"; 
+     stmt.executeUpdate(sql1);
+
+     sql1 = "INSERT INTO Employees(empId,empName,Hours,Overtime,Salary) " +
+           "VALUES (2, 'Allen', 40, 5, null );"; 
+     stmt.executeUpdate(sql1);
+
+     sql1 = "INSERT INTO Employees(empId,empName,Hours,Overtime,Salary) " +
+           "VALUES (3, 'Teddy', 40, 8, null );"; 
+     stmt.executeUpdate(sql1);
+
+     sql1 = "INSERT INTO Employees(empId,empName,Hours,Overtime,Salary) " +
+           "VALUES (4, 'Mark', 40, 10, null );"; 
+     stmt.executeUpdate(sql1);
+
+     sql1 = "INSERT INTO Employees (empId,empName,Hours,Overtime,Salary) " +
+           "VALUES (5, 'Mark1', 50, 10, null );"; 
+     stmt.executeUpdate(sql1);
+	      }
+	      catch(Exception ex)
+	      {
+	    	  System.out.println(ex);
+	    	  
+	      }
+	      
+	     	    // String sql = "DELETE  from Employee1 where empid=1;";
+	    // stmt.executeUpdate(sql);
+	     
+	      List<Empl> empdetails=new ArrayList<Empl>();
+	      
+	      
+	      //retrieving
+	      ResultSet rs = stmt.executeQuery( "SELECT * FROM Employees;" );
+	      while ( rs.next() ) {
+	         int id = rs.getInt("empId");
+	       	         int hours  = rs.getInt("Hours");
+	      int ot=rs.getInt("Overtime") ;
+	     empdetails.add(new Empl(id,hours,ot));
+	      }
+	      for(Empl e :empdetails)
+	      {
+	    	  int sal;
+	    	  int hours=e.geth();
+	    	  int ot=e.getOT();
+	    	  int id=e.getid();
+	    	  if(ot==0)
+	    		   sal=hours*100;
+	    	  else
+	    		   sal=hours*100+ot*150;
+	    	  String sql1 = "UPDATE Employees set salary = "+sal+" where empId="+id;
+	          stmt.executeUpdate(sql1);
+	    	  
+	      }
+	     	                
+                     
+   	        stmt.close();
+	      c.close();
+	    } catch ( Exception e ) {
+	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	      System.exit(0);
+	    }
+	    System.out.println("Table created successfully");
+	  }
+
+
+}
